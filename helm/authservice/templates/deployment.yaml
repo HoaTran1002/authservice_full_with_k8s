@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "authservice.fullname" . }}
+  labels:
+    app: {{ include "authservice.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "authservice.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "authservice.name" . }}
+    spec:
+      containers:
+        - name: authservice
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 9000
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: {{ .Values.spring.datasource.url | quote }}
+            - name: SPRING_DATASOURCE_USERNAME
+              value: {{ .Values.spring.datasource.username | quote }}
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "authservice.secretName" . }}
+                  key: POSTGRES_PASSWORD
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9000
+            initialDelaySeconds: 10
+            periodSeconds: 10

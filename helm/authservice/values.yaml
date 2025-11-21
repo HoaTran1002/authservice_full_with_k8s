@@ -1,0 +1,12 @@
+replicaCount: 2
+
+image:
+  repository: your-registry/authservice
+  tag: latest
+  pullPolicy: IfNotPresent
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/authdb
+    username: auth
+    password: authpass
