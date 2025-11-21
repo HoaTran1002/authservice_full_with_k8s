@@ -5,7 +5,7 @@
       "type": "java",
       "name": "Spring Boot - AuthServiceApplication",
       "request": "launch",
-      "mainClass": "com.metainnotech.authservice.AuthServiceApplication",
+      "mainClass": "com.backend.authservice.AuthServiceApplication",
       "projectName": "authservice"
     }
   ]

@@ -1,0 +1,47 @@
+replicaCount: 3
+
+image:
+  repository: your-registry/authservice
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 9000
+
+resources:
+  requests:
+    cpu: "300m"
+    memory: "512Mi"
+  limits:
+    cpu: "800m"
+    memory: "1Gi"
+
+jvm:
+  opts: >
+    -Xms512m
+    -Xmx768m
+    -XX:+UseG1GC
+    -XX:MaxGCPauseMillis=200
+    -Dspring.profiles.active=production
+
+probe:
+  liveness:
+    path: /actuator/health/liveness
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  readiness:
+    path: /actuator/health/readiness
+    initialDelaySeconds: 10
+    periodSeconds: 5
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+metrics:
+  enabled: true
+  path: /actuator/prometheus
